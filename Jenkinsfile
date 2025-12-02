@@ -1,34 +1,51 @@
-pipeline{
-    agent { label 'dev-server' }
-    
-    stages{
-        stage("Code Clone"){
-            steps{
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = "node-app"
+    }
+
+    stages {
+
+        stage("Code Clone") {
+            steps {
                 echo "Code Clone Stage"
-                git url: "https://github.com/LondheShubham153/node-todo-cicd.git", branch: "master"
+                git branch: "main", url: "https://github.com/vaibhavchudari/node-app.git"
+                // ⚠️ Changed from "master" → "main"
             }
         }
-        stage("Code Build & Test"){
-            steps{
+
+        stage("Code Build") {
+            steps {
                 echo "Code Build Stage"
-                sh "docker build -t node-app ."
+                sh "docker build -t $IMAGE_NAME ."
             }
         }
-        stage("Push To DockerHub"){
-            steps{
-                withCredentials([usernamePassword(
-                    credentialsId:"dockerHubCreds",
-                    usernameVariable:"dockerHubUser", 
-                    passwordVariable:"dockerHubPass")]){
-                sh 'echo $dockerHubPass | docker login -u $dockerHubUser --password-stdin'
-                sh "docker image tag node-app:latest ${env.dockerHubUser}/node-app:latest"
-                sh "docker push ${env.dockerHubUser}/node-app:latest"
+
+        stage("Push To DockerHub") {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: "dockerHubCreds",
+                        usernameVariable: "DOCKER_USER",
+                        passwordVariable: "DOCKER_PASS"
+                    )
+                ]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker tag node-app:latest $DOCKER_USER/node-app:latest
+                        docker push $DOCKER_USER/node-app:latest
+                    '''
                 }
             }
         }
-        stage("Deploy"){
-            steps{
-                sh "docker compose down && docker compose up -d --build"
+
+        stage("Deploy") {
+            steps {
+                sh '''
+                    docker compose down
+                    docker compose up -d --build
+                '''
             }
         }
     }
