@@ -9,7 +9,7 @@ pipeline {
         
         stage("Code"){
             steps{
-                git url: "https://github.com/vaibhavchudari/node-app.git" , branch: "master"
+                git url: "https://github.com/vaibhavchudari/node-app.git" , branch: "main"
                 echo "Code Cloned Successfully"
             }
         }
