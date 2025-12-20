@@ -27,15 +27,17 @@ pipeline {
                }
             }
         }
-        stage('OWASP') {
-            steps {
-                dependencyCheck(
-                    odcInstallation: 'OWASP',
-                    additionalArguments: '--nvdApiDelay 5000',
-                    failOnError: false
-        )
+       stage('OWASP') {
+    steps {
+        catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+            dependencyCheck(
+                odcInstallation: 'OWASP',
+                additionalArguments: '--nvdApiDelay 5000'
+            )
+        }
     }
 }
+
         stage("Build & Test"){
             steps{
                 sh 'docker build -t node-app-2:latest .'
