@@ -36,7 +36,17 @@ pipeline {
             )
         }
     }
+    post {
+        always {
+            catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                dependencyCheckPublisher(
+                    pattern: '**/dependency-check-report.xml'
+                )
+            }
+        }
+    }
 }
+
 
         stage("Build & Test"){
             steps{
