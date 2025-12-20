@@ -7,6 +7,6 @@ metadata:
 spec:
   containers:
     - name: node-container
-      image: trainwithshubham/node-app-batch-6
+      image: vaibhavchudari/node-app-2
       ports:
         - containerPort: 8000
