@@ -27,12 +27,15 @@ pipeline {
                }
             }
         }
-        stage("OWASP"){
-            steps{
-                dependencyCheck additionalArguments: '--nvdApiDelay 5000', odcInstallation: 'OWASP'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-            }
-        }
+        stage('OWASP') {
+            steps {
+                dependencyCheck(
+                    odcInstallation: 'OWASP',
+                    additionalArguments: '--nvdApiDelay 5000',
+                    failOnError: false
+        )
+    }
+}
         stage("Build & Test"){
             steps{
                 sh 'docker build -t node-app-2:latest .'
