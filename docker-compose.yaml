@@ -2,6 +2,6 @@ version: '3.9'
 
 services:
   web:
-    image: vaibhavchudari/node-app:latest
+    image: vaibhavchudari/node-app-2:latest
     ports:
       - "8000:8000"
