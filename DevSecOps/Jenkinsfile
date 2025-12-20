@@ -27,12 +27,26 @@ pipeline {
                }
             }
         }
-       stage("OWASP"){
-            steps{
-                dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'OWASP'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-                }
+       stage("OWASP") {
+    steps {
+        catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+            dependencyCheck(
+                odcInstallation: 'OWASP',
+                additionalArguments: '--scan ./'
+            )
         }
+    }
+    post {
+        always {
+            catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                dependencyCheckPublisher(
+                    pattern: '**/dependency-check-report.xml'
+                )
+            }
+        }
+    }
+}
+
 
         stage("Build & Test"){
             steps{
