@@ -29,7 +29,7 @@ pipeline {
         }
         stage("OWASP"){
             steps{
-                dependencyCheck additionalArguments: '--scan ./', odcInstallation: 'OWASP'
+                dependencyCheck additionalArguments: '--nvdApiDelay 5000', odcInstallation: 'OWASP'
                 dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
             }
         }
